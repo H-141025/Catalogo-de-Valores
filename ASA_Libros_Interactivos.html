@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASA — Dossier Institucional de Valores</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --deep-blue: #0d2347;
+    --azure: #1a4480;
+    --sky: #2e6db4;
+    --gold: #b8963e;
+    --gold-light: #d4af5a;
+    --gold-pale: #f5e6c0;
+    --cream: #faf7f0;
+    --cream-dark: #f0ead8;
+    --text-dark: #1a1610;
+    --text-mid: #3d3320;
+    --text-light: #6b5f48;
+    --rule: #c8b07a;
+    --paper: #f8f4ec;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: linear-gradient(160deg, #060e1c 0%, #0a1a30 40%, #0e2244 70%, #122a52 100%);
+    min-height: 100vh;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* ── SHELF SCREEN ── */
+  #shelf-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #shelf-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(46,109,180,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .shelf-watermark {
+    position: absolute;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(100px, 22vw, 260px);
+    font-weight: 700;
+    color: rgba(184,150,62,0.035);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -0.02em;
+  }
+
+  .shelf-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    position: relative;
+    z-index: 2;
+    animation: fadeInDown 1s ease both;
+  }
+
+  .shelf-emblem {
+    width: 72px;
+    height: 72px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    position: relative;
+  }
+
+  .shelf-emblem::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(184,150,62,0.35);
+    border-radius: 50%;
+  }
+
+  .shelf-emblem svg {
+    width: 34px; height: 34px;
+    fill: var(--gold); opacity: 0.9;
+  }
+
+  .shelf-rule {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 1.2rem;
+  }
+
+  .shelf-eyebrow {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.8rem;
+  }
+
+  .shelf-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 4vw, 3rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  .shelf-title span { color: var(--gold-light); }
+
+  .shelf-org {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.6rem;
+  }
+
+  /* ── BOOKS GRID ── */
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2.5rem;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1100px;
+    animation: fadeInUp 1s ease 0.3s both;
+  }
+
+  @media (max-width: 900px) {
+    .books-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  }
+  @media (max-width: 560px) {
+    .books-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+  }
+
+  /* ── BOOK CARD ── */
+  .book-card {
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: bottom center;
+  }
+
+  .book-card:hover { transform: translateY(-12px) scale(1.03); }
+
+  .book-3d {
+    position: relative;
+    width: 100%;
+    padding-bottom: 148%; /* 2:3 proportion */
+  }
+
+  /* Book shadow */
+  .book-card::after {
+    content: '';
+    position: absolute;
+    bottom: -18px;
+    left: 10%;
+    right: 10%;
+    height: 20px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
+    border-radius: 50%;
+    transition: all 0.4s ease;
+    pointer-events: none;
+  }
+
+  .book-card:hover::after {
+    bottom: -28px;
+    left: 5%;
+    right: 5%;
+    opacity: 0.7;
+  }
+
+  /* Book cover face */
+  .book-face {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--deep-blue) 0%, var(--navy) 60%, #0a1e3a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1.2rem;
+    overflow: hidden;
+    border-radius: 2px 6px 6px 2px;
+    box-shadow:
+      -6px 0 12px rgba(0,0,0,0.4),
+      inset -3px 0 8px rgba(0,0,0,0.2),
+      2px 0 4px rgba(184,150,62,0.1);
+  }
+
+  /* Book spine (left side) */
+  .book-face::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 18px;
+    background: linear-gradient(90deg, #050d1a, #0d2347 40%, #0a1a2e);
+    box-shadow: inset -2px 0 4px rgba(0,0,0,0.3);
+  }
+
+  /* Gold top/bottom strip */
+  .book-face::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 18px;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+  }
+
+  .book-top-line {
+    position: absolute;
+    top: 0;
+    left: 18px;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+  }
+
+  .book-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    margin-left: 18px; /* offset for spine */
+    width: calc(100% - 18px);
+  }
+
+  .book-roman {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .book-divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .book-doc-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(184,150,62,0.6);
+  }
+
+  .book-title-text {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.72rem, 1.5vw, 0.92rem);
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    margin-top: 0.3rem;
+  }
+
+  .book-title-text span { color: var(--gold-light); }
+
+  .book-emblem-sm {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(184,150,62,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .book-emblem-sm svg {
+    width: 18px; height: 18px;
+    fill: var(--gold); opacity: 0.8;
+  }
+
+  .book-open-hint {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.25);
+    margin-top: 0.8rem;
+    transition: color 0.3s;
+  }
+
+  .book-card:hover .book-open-hint {
+    color: rgba(184,150,62,0.6);
+  }
+
+  /* Watermark on each book */
+  .book-watermark {
+    position: absolute;
+    right: -5px;
+    bottom: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(3rem, 7vw, 5rem);
+    font-weight: 700;
+    color: rgba(184,150,62,0.04);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ── OVERLAY / OPEN BOOK ── */
+  #book-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(4, 10, 22, 0.0);
+    transition: background 0.5s ease;
+    padding: 1.5rem;
+  }
+
+  #book-overlay.open {
+    display: flex;
+    background: rgba(4, 10, 22, 0.92);
+  }
+
+  /* Spread: two pages side by side */
+  .book-spread {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    max-width: 1100px;
+    height: min(85vh, 700px);
+    position: relative;
+    transform-origin: center center;
+    opacity: 0;
+    transform: scale(0.6) rotateY(-15deg);
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow:
+      0 40px 80px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(184,150,62,0.15);
+    perspective: 2400px;
+    perspective-origin: 50% 50%;
+  }
+
+  #book-overlay.open .book-spread {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+
+  /* Left page (even) */
+  .page-left {
+    background: var(--paper);
+    padding: 3rem 2.5rem 3rem 3rem;
+    overflow: hidden;
+    position: relative;
+    border-right: 1px solid rgba(200,176,122,0.2);
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px 0 0 4px;
+  }
+
+  /* Right page (odd) */
+  .page-right {
+    background: var(--cream);
+    padding: 3rem 3rem 3rem 2.5rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Spine shadow in center */
+  .page-left::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(90deg, transparent, rgba(10,22,40,0.04));
+    pointer-events: none;
+  }
+
+  .page-right::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(270deg, transparent, rgba(10,22,40,0.04));
+    pointer-events: none;
+  }
+
+  /* Gold top line on pages */
+  .page-left::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), transparent);
+  }
+
+  .page-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(200,176,122,0.3);
+    flex-shrink: 0;
+  }
+
+  .page-doc-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .page-doc-num::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .page-doc-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    font-weight: 700;
+    color: var(--deep-blue);
+    line-height: 1.2;
+  }
+
+  .page-doc-title span { color: var(--gold); }
+
+  .page-body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Content pager */
+  .content-pages-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .content-page {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    overflow: hidden;
+  }
+
+  .content-page.active {
+    opacity: 1;
+    position: relative;
+  }
+
+  /* Text content in pages */
+  .pg-lead {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+    font-style: italic;
+    line-height: 1.8;
+    color: var(--text-mid);
+    border-left: 3px solid var(--gold);
+    padding-left: 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .pg-section-label {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--azure);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pg-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--rule), transparent);
+    max-width: 120px;
+  }
+
+  .pg-heading {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.75rem, 1.4vw, 0.9rem);
+    font-weight: 600;
+    color: var(--deep-blue);
+    margin-bottom: 0.8rem;
+  }
+
+  .pg-article {
+    background: #fff;
+    border: 1px solid rgba(200,176,122,0.25);
+    border-left: 3px solid var(--gold);
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .pg-art-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    background: var(--deep-blue);
+    color: var(--gold-light);
+    padding: 0.15rem 0.5rem;
+    display: inline-block;
+    margin-bottom: 0.4rem;
+  }
+
+  .pg-art-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.6rem, 1vw, 0.7rem);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--azure);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .pg-art-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+    line-height: 1.65;
+    color: var(--text-mid);
+  }
+
+  .pg-value-item {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 0 0.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(200,176,122,0.2);
+  }
+
+  .pg-value-num {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: rgba(26,68,128,0.12);
+    line-height: 1;
+    text-align: right;
+    padding-top: 0.05rem;
+  }
+
+  .pg-value-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+    font-weight: 600;
+    color: var(--deep-blue);
+    line-height: 1.35;
+    margin-bottom: 0.3rem;
+  }
+
+  .pg-value-body {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+    line-height: 1.6;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  .pg-cat-block {
+    margin-bottom: 1.2rem;
+  }
+
+  .pg-cat-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(0.62rem, 1vw, 0.75rem);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--deep-blue);
+    text-transform: uppercase;
+    padding: 0.5rem 0.8rem;
+    background: rgba(13,35,71,0.06);
+    border-left: 3px solid var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .pg-cat-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.78rem, 1.2vw, 0.88rem);
+    color: var(--text-light);
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+    padding-left: 0.3rem;
+  }
+
+  .pg-cat-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .pg-cat-list li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.78rem, 1.2vw, 0.9rem);
+    color: var(--text-mid);
+    line-height: 1.45;
+    padding: 0.25rem 0 0.25rem 1rem;
+    border-bottom: 1px solid rgba(200,176,122,0.1);
+    position: relative;
+  }
+
+  .pg-cat-list li::before {
+    content: '◆';
+    position: absolute;
+    left: 0;
+    font-size: 0.28rem;
+    color: var(--gold);
+    top: 0.65rem;
+  }
+
+  .pg-pull {
+    background: linear-gradient(135deg, var(--deep-blue), var(--navy));
+    padding: 1.2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pg-pull::before {
+    content: '"';
+    position: absolute;
+    top: -0.8rem;
+    left: 0.8rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    color: rgba(184,150,62,0.1);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .pg-pull p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+    font-style: italic;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+    position: relative;
+  }
+
+  .pg-pull cite {
+    display: block;
+    margin-top: 0.6rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  .pg-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .pg-tag {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid rgba(26,68,128,0.2);
+    color: var(--azure);
+    background: rgba(26,68,128,0.04);
+  }
+
+  /* Page footer */
+  .page-footer {
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(200,176,122,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 0.8rem;
+  }
+
+  .page-folio {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    opacity: 0.45;
+  }
+
+  .page-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    color: var(--gold);
+    opacity: 0.5;
+  }
+
+  /* Navigation controls */
+  .book-nav {
+    position: absolute;
+    bottom: -3.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    background: rgba(13,35,71,0.8);
+    border: 1px solid rgba(184,150,62,0.3);
+    padding: 0.55rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-btn:hover {
+    background: rgba(184,150,62,0.15);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.25;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .close-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 0.55rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .close-btn:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .page-indicator {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Mobile layout for open book */
+  @media (max-width: 700px) {
+    .book-spread {
+      grid-template-columns: 1fr;
+      height: auto;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .page-left { border-radius: 4px 4px 0 0; border-right: none; border-bottom: 1px solid rgba(200,176,122,0.2); }
+    .page-right { border-radius: 0 0 4px 4px; }
+    .page-left::after { display: none; }
+    .page-right::before { display: none; }
+    #book-overlay { padding: 1rem; align-items: flex-start; padding-top: 2.5rem; }
+  }
+
+  .ornament-line {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 1rem 0;
+    color: var(--rule);
+  }
+  .ornament-line span { flex: 1; height: 1px; background: var(--rule); opacity: 0.3; }
+  .ornament-line em { font-size: 0.6rem; opacity: 0.5; font-style: normal; }
+
+  /* ── PAGE-TURN ANIMATION ── */
+  /*
+   * Strategy: 3D flip of the right page only, pivoting at the spine (left edge).
+   * The flip-layer is an absolutely-positioned element that clones the current
+   * right-page content and rotates 0°→−180° (forward) or −180°→0° (backward).
+   * Content is swapped silently at the midpoint (≈90°, when the page is edge-on).
+   */
+
+  /* The flipping layer — absolutely covers the right half of the spread */
+  #flip-layer {
+    position: absolute;
+    /* right half of the spread */
+    left: 50%;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    /* pivot at the LEFT edge (the spine) */
+    transform-origin: left center;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    z-index: 50;
+    /* hidden by default */
+    display: none;
+    /* prevent backface from showing through */
+    backface-visibility: hidden;
+  }
+
+  /* Front face = current right page (going forward) */
+  #flip-layer .flip-front {
+    position: absolute;
+    inset: 0;
+    background: var(--cream);
+    padding: 3rem 3rem 3rem 2.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 4px 4px 0;
+    backface-visibility: hidden;
+    /* Lighting: gradient that shifts as the page turns */
+    box-shadow: inset 4px 0 20px rgba(0,0,0,0.06);
+  }
+
+  /* Back face = back of the turning page (blank paper texture) */
+  #flip-layer .flip-back {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #f0ead8 0%, #e8e0cc 40%, #ede6d4 100%);
+    border-radius: 0 4px 4px 0;
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    /* Subtle paper lines for realism */
+    background-image:
+      linear-gradient(135deg, #f0ead8 0%, #e8e0cc 40%, #ede6d4 100%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 22px,
+        rgba(200,176,122,0.06) 22px,
+        rgba(200,176,122,0.06) 23px
+      );
+  }
+
+  /* Dynamic shadow overlay on the static right page (receiving shadow as page turns) */
+  #flip-shadow {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    background: transparent;
+    border-radius: 0 4px 4px 0;
+    display: none;
+  }
+
+  /* Dynamic shadow overlay on the left page (spine shadow during turn) */
+  #flip-shadow-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    background: transparent;
+    border-radius: 4px 0 0 4px;
+    display: none;
+  }
+
+  /* Crease / curl shadow on the flip layer itself */
+  #flip-layer .flip-front::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 40px;
+    background: linear-gradient(270deg, rgba(0,0,0,0.12), transparent);
+    pointer-events: none;
+    border-radius: 0 4px 4px 0;
+  }
+  #flip-layer .flip-front::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 30px;
+    background: linear-gradient(270deg, transparent, rgba(10,22,40,0.04));
+    pointer-events: none;
+  }
+
+  /* Gold top rule on flip-front (mirrors .page-right styling) */
+  /* (the page-right ::before gold line is on page-left; right page has no top gold line by default) */
+
+  @media (max-width: 700px) {
+    #flip-layer, #flip-shadow, #flip-shadow-left { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SHELF SCREEN ═══════════════ -->
+<div id="shelf-screen">
+  <div class="shelf-watermark">ASA</div>
+
+  <div class="shelf-header">
+    <div class="shelf-emblem">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+      </svg>
+    </div>
+    <div class="shelf-rule"></div>
+    <p class="shelf-eyebrow">Autoridad Salvadoreña del Agua</p>
+    <h1 class="shelf-title">Dossier <span>Institucional</span><br>de Valores</h1>
+    <p class="shelf-org">Marco Ético · Normativo · Institucional</p>
+  </div>
+
+  <div class="books-grid">
+
+    <!-- BOOK I -->
+    <div class="book-card" onclick="openBook(0)" title="Abrir Declaratoria de Valores">
+      <div class="book-3d">
+        <div class="book-face">
+          <div class="book-top-line"></div>
+          <div class="book-watermark">I</div>
+          <div class="book-content">
+            <div class="book-roman">I</div>
+            <div class="book-divider"></div>
+            <div class="book-doc-label">Documento I</div>
+            <div class="book-title-text">Declaratoria<br>de <span>Valores</span></div>
+            <div class="book-emblem-sm">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            </div>
+            <div class="book-open-hint">Toque para abrir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK II -->
+    <div class="book-card" onclick="openBook(1)" title="Abrir Código de Valores">
+      <div class="book-3d">
+        <div class="book-face">
+          <div class="book-top-line"></div>
+          <div class="book-watermark">II</div>
+          <div class="book-content">
+            <div class="book-roman">II</div>
+            <div class="book-divider"></div>
+            <div class="book-doc-label">Documento II</div>
+            <div class="book-title-text">Código de<br><span>Valores</span></div>
+            <div class="book-emblem-sm">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            </div>
+            <div class="book-open-hint">Toque para abrir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK III -->
+    <div class="book-card" onclick="openBook(2)" title="Abrir Decálogo de Valores">
+      <div class="book-3d">
+        <div class="book-face">
+          <div class="book-top-line"></div>
+          <div class="book-watermark">III</div>
+          <div class="book-content">
+            <div class="book-roman">III</div>
+            <div class="book-divider"></div>
+            <div class="book-doc-label">Documento III</div>
+            <div class="book-title-text">Decálogo de<br><span>Valores</span></div>
+            <div class="book-emblem-sm">
+              <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            </div>
+            <div class="book-open-hint">Toque para abrir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK IV -->
+    <div class="book-card" onclick="openBook(3)" title="Abrir Catálogo de Valores">
+      <div class="book-3d">
+        <div class="book-face">
+          <div class="book-top-line"></div>
+          <div class="book-watermark">IV</div>
+          <div class="book-content">
+            <div class="book-roman">IV</div>
+            <div class="book-divider"></div>
+            <div class="book-doc-label">Documento IV</div>
+            <div class="book-title-text">Catálogo de<br><span>Valores</span></div>
+            <div class="book-emblem-sm">
+              <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.3C18 2.1 15.9 0 13.3 0c-1.4 0-2.5.73-3.3 1.89L9 3.5 7.98 1.89C7.18.73 6.08 0 4.7 0 2.1 0 0 2.1 0 4.7c0 .42.1.87.18 1.3H0c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM13.3 2c1.3 0 2.7 1.1 2.7 2.7 0 1.6-1.4 2.7-2.7 2.7L9 7.4V7c0-2.76 2.24-5 5-5h-.7zm-8.6 0C6.9 2 9 3.1 9 4.7L9 7l-4.3-.03C3.4 6.97 2 5.97 2 4.7 2 3.1 3.4 2 4.7 2zM20 19H4V8h16v11z"/></svg>
+            </div>
+            <div class="book-open-hint">Toque para abrir</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ BOOK OVERLAY ═══════════════ -->
+<div id="book-overlay" onclick="handleOverlayClick(event)">
+  <div class="book-spread" id="book-spread">
+
+    <!-- PAGE-TURN ANIMATION LAYERS -->
+    <div id="flip-shadow-left"></div>
+    <div id="flip-shadow"></div>
+    <div id="flip-layer">
+      <div class="flip-front" id="flip-front-content">
+        <!-- cloned right-page header -->
+        <div class="page-header" id="flip-front-header">
+          <div class="page-doc-num" id="flip-doc-num"></div>
+          <div class="page-doc-title" id="flip-title"></div>
+        </div>
+        <div class="page-body">
+          <div class="content-pages-container" id="flip-body"></div>
+        </div>
+        <div class="page-footer">
+          <span class="page-folio">◆</span>
+          <span class="page-num" id="flip-page-num"></span>
+        </div>
+      </div>
+      <div class="flip-back"></div>
+    </div>
+
+    <!-- LEFT PAGE -->
+    <div class="page-left" id="page-left">
+      <div class="page-header">
+        <div class="page-doc-num" id="left-doc-num">Documento I</div>
+        <div class="page-doc-title" id="left-title">Declaratoria de <span>Valores</span></div>
+      </div>
+      <div class="page-body">
+        <div class="content-pages-container" id="left-content"></div>
+      </div>
+      <div class="page-footer">
+        <span class="page-folio">Autoridad Salvadoreña del Agua</span>
+        <span class="page-num" id="left-page-num">◆</span>
+      </div>
+    </div>
+
+    <!-- RIGHT PAGE -->
+    <div class="page-right" id="page-right">
+      <div class="page-header">
+        <div class="page-doc-num" id="right-doc-num">Documento I</div>
+        <div class="page-doc-title" id="right-title">Declaratoria de <span>Valores</span></div>
+      </div>
+      <div class="page-body">
+        <div class="content-pages-container" id="right-content"></div>
+      </div>
+      <div class="page-footer">
+        <span class="page-folio">◆</span>
+        <span class="page-num" id="right-page-num">◆</span>
+      </div>
+    </div>
+
+    <!-- Nav controls -->
+    <div class="book-nav">
+      <button class="nav-btn" id="btn-prev" onclick="changePage(-1)" disabled>◂ Anterior</button>
+      <span class="page-indicator" id="page-indicator">Páginas 1–2 de N</span>
+      <button class="nav-btn" id="btn-next" onclick="changePage(1)">Siguiente ▸</button>
+      <button class="close-btn" onclick="closeBook()">✕ Cerrar</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── BOOK DATA ────────────────────────────────────────────────────────────────
+// Each book is an array of "spreads" (pairs of pages).
+// Each spread = { left: HTML string, right: HTML string }
+
+const books = [
+
+  // ─── BOOK I: DECLARATORIA ─────────────────────────────────────────────────
+  {
+    title: 'Declaratoria de <span>Valores</span>',
+    docNum: 'Documento I',
+    spreads: [
+      {
+        left: `
+          <div class="pg-tags">
+            <span class="pg-tag">Marco Ético</span>
+            <span class="pg-tag">Declaración Institucional</span>
+            <span class="pg-tag">Obligatorio</span>
+            <span class="pg-tag">Patrimonio Hídrico</span>
+          </div>
+          <p class="pg-lead">La Autoridad Salvadoreña del Agua declara públicamente su compromiso inquebrantable con la construcción de una institucionalidad moderna, ética y técnica, cuyo propósito supremo es garantizar el derecho humano al agua y proteger el patrimonio hídrico nacional para las presentes y futuras generaciones.</p>
+          <p class="pg-art-body" style="margin-bottom:1rem;line-height:1.75;">A través de esta declaración formal, la institución asumirá, promoverá y exigirá que las decisiones de sus autoridades y el comportamiento de todo su personal se rijan estrictamente bajo los siguientes preceptos de obligatorio cumplimiento:</p>
+          <div class="pg-section-label">Preceptos Fundamentales</div>
+          <div class="pg-heading">Los Siete Pilares de la Declaratoria</div>
+        `,
+        right: `
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar I</div>
+            <div class="pg-art-title">Justicia Social e Hídrica</div>
+            <p class="pg-art-body">Se orientarán todos los esfuerzos institucionales hacia el acceso universal y el abastecimiento equitativo de agua limpia, priorizando siempre la dignidad de las comunidades históricamente vulnerables.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar II</div>
+            <div class="pg-art-title">Transparencia e Integridad</div>
+            <p class="pg-art-body">Se mantendrá una política de cero tolerancias a la corrupción y al favoritismo, asegurando que cada permiso, inspección y recurso financiero se administre bajo el principio de transparencia absoluta y rendición de cuentas pública.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar III</div>
+            <div class="pg-art-title">Rigor Técnico y Científico</div>
+            <p class="pg-art-body">Se emitirá cada dictamen, resolución y normativa con base en datos reales, evidencias científicas medibles y criterios objetivos, libres de cualquier sesgo o presión externa.</p>
+          </div>
+        `
+      },
+      {
+        left: `
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar IV</div>
+            <div class="pg-art-title">Restauración Ecológica Nacional</div>
+            <p class="pg-art-body">Se asumirá la responsabilidad de proteger, conservar y regenerar las cuencas, ríos y mantos acuíferos de la patria, actuando con resiliencia y solidaridad territorial ante cualquier crisis ambiental.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar V</div>
+            <div class="pg-art-title">Modernización del Servicio Público</div>
+            <p class="pg-art-body">Se adoptarán innovaciones tecnológicas y herramientas digitales avanzadas que erradicarán la burocracia, optimizarán los tiempos de respuesta y simplificarán los trámites institucionales.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar VI</div>
+            <div class="pg-art-title">Gobernanza desde el Territorio</div>
+            <p class="pg-art-body">Se integrará activamente a las municipalidades, comunidades y Juntas de Agua en la administración sostenible del recurso, construyendo consensos mediante participación ciudadana legítima.</p>
+          </div>
+        `,
+        right: `
+          <div class="pg-article">
+            <div class="pg-art-badge">Pilar VII</div>
+            <div class="pg-art-title">Dignificación del Talento Humano</div>
+            <p class="pg-art-body">Se consolidará un clima laboral seguro, inclusivo y colaborativo que potenciará el desarrollo profesional continuo, respetará el equilibrio humano y celebrará el orgullo de servir a El Salvador.</p>
+          </div>
+          <div class="ornament-line"><span></span><em>✦</em><span></span></div>
+          <div class="pg-pull">
+            <p>Esta Declaratoria de Valores constituye la brújula ética de la Autoridad Salvadoreña del Agua y se convierte en la norma viva que guía cada acción administrativa, operativa, legal y técnica en todo el territorio nacional.</p>
+            <cite>— Declaratoria Formal, ASA</cite>
+          </div>
+        `
+      }
+    ]
+  },
+
+  // ─── BOOK II: CÓDIGO DE VALORES ───────────────────────────────────────────
+  {
+    title: 'Código de <span>Valores</span>',
+    docNum: 'Documento II',
+    spreads: [
+      {
+        left: `
+          <div class="pg-tags">
+            <span class="pg-tag">Normativa Interna</span>
+            <span class="pg-tag">Conducta Institucional</span>
+            <span class="pg-tag">5 Capítulos</span>
+            <span class="pg-tag">12 Artículos</span>
+          </div>
+          <p class="pg-lead">El Código norma, orienta y unifica la conducta ética, profesional y laboral de todos los servidores públicos de la ASA, sin distinción de nivel jerárquico, modalidad de contratación o ubicación territorial.</p>
+          <div class="pg-section-label">Capítulo I</div>
+          <div class="pg-heading">Disposiciones Generales</div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 1</div>
+            <div class="pg-art-title">Objeto del Código</div>
+            <p class="pg-art-body">Normar, orientar y unificar la conducta ética, profesional y laboral de todos los servidores públicos de la ASA, alineando cada acción técnica, legal y administrativa con los objetivos estratégicos de la institución.</p>
+          </div>
+        `,
+        right: `
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 2</div>
+            <div class="pg-art-title">Ámbito de Aplicación</div>
+            <p class="pg-art-body">Las normas contenidas en este Código son de carácter obligatorio para la totalidad del personal de la ASA: administrativo, técnico y de inspección de campo, sin distinción de nivel jerárquico, modalidad de contratación o ubicación territorial.</p>
+          </div>
+          <div class="ornament-line"><span></span><em>✦</em><span></span></div>
+          <div class="pg-section-label">Capítulo II</div>
+          <div class="pg-heading">Principios Rectores de la Conducta Institucional</div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 3</div>
+            <div class="pg-art-title">Justicia Hídrica y Acceso Universal</div>
+            <p class="pg-art-body">El personal priorizará en todo momento el bienestar de la población salvadoreña, garantizando que los procesos de autorización respondan a criterios de equidad y protejan el derecho humano al agua de las comunidades vulnerables.</p>
+          </div>
+        `
+      },
+      {
+        left: `
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 4</div>
+            <div class="pg-art-title">Rigor Técnico y Científico</div>
+            <p class="pg-art-body">Las resoluciones, dictámenes e informes emitidos por las áreas técnicas se fundamentarán estrictamente en datos reales, evidencias medibles y criterios científicos hidrológicos. Se prohíbe la alteración u ocultamiento de datos técnicos.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 5</div>
+            <div class="pg-art-title">Transparencia y Anticorrupción</div>
+            <p class="pg-art-body">Se mantendrá una política de cero tolerancia frente a cualquier acto de corrupción, cohecho o favoritismo. Los servidores públicos se abstendrán de solicitar o recibir dádivas o beneficios indebidos.</p>
+          </div>
+          <div class="ornament-line"><span></span><em>✦</em><span></span></div>
+          <div class="pg-section-label">Capítulo III</div>
+          <div class="pg-heading">Relaciones Laborales y Clima Interno</div>
+        `,
+        right: `
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 6</div>
+            <div class="pg-art-title">Compañerismo y Colaboración Interdisciplinaria</div>
+            <p class="pg-art-body">Los colaboradores construirán un ambiente de trabajo basado en el respeto mutuo, el apoyo solidario y la comunicación asertiva. Se eliminarán las barreras burocráticas entre departamentos.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 7</div>
+            <div class="pg-art-title">Respeto a la Diversidad y Derechos Laborales</div>
+            <p class="pg-art-body">La institución asegurará un entorno inclusivo, libre de discriminación y acoso laboral, respetando el equilibrio entre la jornada de trabajo y el tiempo de descanso familiar de los colaboradores.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 8</div>
+            <div class="pg-art-title">Seguridad en el Trabajo de Campo</div>
+            <p class="pg-art-body">La organización proveerá herramientas adecuadas, equipos de protección personal y protocolos de seguridad para el personal de inspección y monitoreo territorial.</p>
+          </div>
+        `
+      },
+      {
+        left: `
+          <div class="pg-section-label">Capítulo IV</div>
+          <div class="pg-heading">Modernización y Vocación de Servicio</div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 9</div>
+            <div class="pg-art-title">Innovación y Eficiencia Operativa</div>
+            <p class="pg-art-body">Los profesionales de la ASA adoptarán y optimizarán el uso de plataformas digitales y herramientas tecnológicas avanzadas, orientadas a la reducción de tiempos de respuesta en la emisión de permisos.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 10</div>
+            <div class="pg-art-title">Vocación de Servicio y Atención Humana</div>
+            <p class="pg-art-body">La atención a los usuarios, comunidades y sectores productivos se caracterizará por la paciencia, la empatía y el uso de un lenguaje claro y accesible.</p>
+          </div>
+        `,
+        right: `
+          <div class="pg-section-label">Capítulo V</div>
+          <div class="pg-heading">Mecanismos de Aplicación y Cumplimiento</div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 11</div>
+            <div class="pg-art-title">Difusión y Socialización</div>
+            <p class="pg-art-body">La institución ejecutará programas permanentes de capacitación y socialización del presente Código, garantizando que cada nuevo colaborador conozca y firme un acta de compromiso con estos valores desde el inicio de sus funciones.</p>
+          </div>
+          <div class="pg-article">
+            <div class="pg-art-badge">Artículo 12</div>
+            <div class="pg-art-title">Comité de Ética y Valores</div>
+            <p class="pg-art-body">Se constituirá un Comité de Ética interno que velará por el cumplimiento del presente Código, recibirá denuncias sobre conductas contrarias a los valores institucionales y propondrá las medidas correctivas de conformidad con la Ley de Recursos Hídricos.</p>
+          </div>
+        `
+      }
+    ]
+  },
+
+  // ─── BOOK III: DECÁLOGO ───────────────────────────────────────────────────
+  {
+    title: 'Decálogo de <span>Valores</span>',
+    docNum: 'Documento III',
+    spreads: [
+      {
+        left: `
+          <div class="pg-tags">
+            <span class="pg-tag">10 Mandatos</span>
+            <span class="pg-tag">Identidad Institucional</span>
+            <span class="pg-tag">Guía de Conducta</span>
+          </div>
+          <p class="pg-lead">Diez principios esenciales que condensan el espíritu ético, técnico y humano de la Autoridad Salvadoreña del Agua, constituyendo una guía de conducta para cada servidor público en el ejercicio de sus funciones.</p>
+          <div class="pg-value-item">
+            <div class="pg-value-num">01</div>
+            <div>
+              <div class="pg-value-title">"Acceso universal y prioridad al abastecimiento equitativo del agua limpia."</div>
+              <p class="pg-value-body">Se priorizará el derecho humano al agua de las familias salvadoreñas mediante una distribución justa que dignifique la salud pública y el bienestar colectivo.</p>
+            </div>
+          </div>
+          <div class="pg-value-item">
+            <div class="pg-value-num">02</div>
+            <div>
+              <div class="pg-value-title">"Responsabilidad ecológica en la conservación, restauración y regeneración de acuíferos."</div>
+              <p class="pg-value-body">Se impulsará la protección activa de las cuencas hidrográficas, ríos y lagos del país, promoviendo acciones que aseguren la resiliencia climática.</p>
+            </div>
+          </div>
+        `,
+        right: `
+          <div class="pg-value-item">
+            <div class="pg-value-num">03</div>
+            <div>
+              <div class="pg-value-title">"Transparencia absoluta en la rendición de cuentas, comunicación y uso de los bienes públicos."</div>
+              <p class="pg-value-body">Se garantizará el acceso abierto, oportuno y claro de la ciudadanía a toda la información técnica, permisos y uso de fondos públicos.</p>
+            </div>
+          </div>
+          <div class="pg-value-item">
+            <div class="pg-value-num">04</div>
+            <div>
+              <div class="pg-value-title">"Integridad institucional y rechazo contundente a todo acto de corrupción o favoritismo."</div>
+              <p class="pg-value-body">Se vigilará que las actuaciones de la autoridad hídrica respondan a los más altos estándares morales, impidiendo cualquier conflicto de interés.</p>
+            </div>
+          </div>
+          <div class="pg-value-item">
+            <div class="pg-value-num">05</div>
+            <div>
+              <div class="pg-value-title">"Gobernanza participativa para la inclusión ciudadana y resolución pacífica de conflictos hídricos."</div>
+              <p class="pg-value-body">Se incorporarán activamente las voces de las municipalidades, comunidades y Juntas de Agua en la toma de decisiones.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        left: `
+          <div class="pg-value-item">
+            <div class="pg-value-num">06</div>
+            <div>
+              <div class="pg-value-title">"Compañerismo solidario y articulación colaborativa entre todos los niveles y departamentos."</div>
+              <p class="pg-value-body">Se fomentará el apoyo mutuo y la eliminación de barreras de comunicación interna, consolidando una sinergia institucional que optimizará el cumplimiento de las metas.</p>
+            </div>
+          </div>
+          <div class="pg-value-item">
+            <div class="pg-value-num">07</div>
+            <div>
+              <div class="pg-value-title">"Equilibrio humano, seguridad integral y respeto a la diversidad del personal."</div>
+              <p class="pg-value-body">Se asegurarán condiciones laborales dignas, un balance óptimo con la vida familiar y un entorno seguro que valorará la pluralidad de ideas de los colaboradores.</p>
+            </div>
+          </div>
+          <div class="pg-value-item">
+            <div class="pg-value-num">08</div>
+            <div>
+              <div class="pg-value-title">"Rigor científico, imparcialidad técnica y decisiones fundamentadas en datos reales."</div>
+              <p class="pg-value-body">Se emitirán dictámenes y resoluciones basados estrictamente en evidencias medibles, estudios especializados y análisis objetivos libres de sesgos.</p>
+            </div>
+          </div>
+        `,
+        right: `
+          <div class="pg-value-item">
+            <div class="pg-value-num">09</div>
+            <div>
+              <div class="pg-value-title">"Eficiencia operativa, innovación tecnológica y optimización de los trámites institucionales."</div>
+              <p class="pg-value-body">Se implementarán herramientas digitales avanzadas que modernizarán la gestión del recurso y agilizarán la atención, reduciendo los tiempos de respuesta y la burocracia.</p>
+            </div>
+          </div>
+          <div class="pg-value-item">
+            <div class="pg-value-num">10</div>
+            <div>
+              <div class="pg-value-title">"Pertenencia institucional y vocación inquebrantable de servicio al pueblo salvadoreño."</div>
+              <p class="pg-value-body">Se consolidará un orgullo profundo en el personal por la labor de campo y oficina, asumiendo que sus funciones diarias transformarán positivamente el desarrollo sostenible de la patria.</p>
+            </div>
+          </div>
+          <div class="ornament-line"><span></span><em>✦</em><span></span></div>
+          <p class="pg-art-body" style="text-align:center;font-style:italic;color:var(--text-light);font-size:0.88rem;line-height:1.7;">"Diez mandatos que definen el espíritu institucional de la ASA"</p>
+        `
+      }
+    ]
+  },
+
+  // ─── BOOK IV: CATÁLOGO ────────────────────────────────────────────────────
+  {
+    title: 'Catálogo de <span>Valores</span>',
+    docNum: 'Documento IV',
+    spreads: [
+      {
+        left: `
+          <div class="pg-tags">
+            <span class="pg-tag">Herramienta Normativa</span>
+            <span class="pg-tag">3 Categorías</span>
+            <span class="pg-tag">Valores Organizacionales</span>
+          </div>
+          <p class="pg-lead">El Catálogo de Valores constituye la herramienta técnica y administrativa de referencia que clasifica y sistematiza los principios rectores de la institución en tres dimensiones complementarias: organizacional, laboral y profesional.</p>
+          <div class="pg-cat-block">
+            <div class="pg-cat-title">1.1 · Valores Organizacionales</div>
+            <p class="pg-cat-desc">Principios fundamentales que rigen las decisiones y acciones dentro de la organización, fortaleciendo la identidad institucional y el sentido de pertenencia.</p>
+            <ul class="pg-cat-list">
+              <li>Abastecimiento equitativo y prioridad al acceso universal del agua.</li>
+              <li>Responsabilidad ecológica en la protección y regeneración de acuíferos.</li>
+              <li>Transparencia absoluta en la comunicación y rendición de cuentas pública.</li>
+              <li>Integridad profesional y rechazo contundente a prácticas de corrupción.</li>
+              <li>Innovación tecnológica para optimizar la distribución del recurso hídrico.</li>
+              <li>Justicia distributiva y asignación oportuna a comunidades vulnerables.</li>
+            </ul>
+          </div>
+        `,
+        right: `
+          <div class="pg-cat-block">
+            <ul class="pg-cat-list">
+              <li>Inclusión ciudadana y escucha activa a todos los sectores de la población.</li>
+              <li>Sostenibilidad vital y protección a largo plazo de los recursos hídricos.</li>
+              <li>Solidaridad territorial ante crisis de escasez o emergencias por contaminación.</li>
+              <li>Innovación humana mediante herramientas tecnológicas para optimizar la distribución.</li>
+              <li>Cooperación transfronteriza y gestión conjunta de cuencas compartidas.</li>
+              <li>Sustentabilidad financiera y uso eficiente de los cánones institucionales.</li>
+              <li>Gobernanza participativa y fortalecimiento de la confianza pública en la gestión.</li>
+              <li>Integridad institucional y rechazo contundente a todo acto de corrupción.</li>
+            </ul>
+          </div>
+          <div class="ornament-line"><span></span><em>✦</em><span></span></div>
+          <div class="pg-cat-block">
+            <div class="pg-cat-title">1.2 · Valores Laborales</div>
+            <p class="pg-cat-desc">Pautas de convivencia y clima interno entre colaboradores, promoviendo un ambiente armónico y cohesionado dentro de la institución.</p>
+          </div>
+        `
+      },
+      {
+        left: `
+          <div class="pg-cat-block">
+            <ul class="pg-cat-list">
+              <li>Compañerismo solidario y apoyo mutuo en las tareas diarias.</li>
+              <li>Comunicación empática y escucha asertiva entre todos los colaboradores.</li>
+              <li>Reconocimiento constante de los logros y del esfuerzo laboral.</li>
+              <li>Colaboración abierta y trabajo articulado entre los diferentes departamentos.</li>
+              <li>Pertenencia institucional y orgullo por la protección del recurso hídrico.</li>
+              <li>Respeto a la diversidad, pluralidad de ideas y perspectivas individuales.</li>
+              <li>Equilibrio humano entre el tiempo de descanso y el desempeño laboral.</li>
+              <li>Seguridad integral para el bienestar físico y emocional en todo entorno.</li>
+              <li>Optimismo motivador ante los desafíos diarios de la gestión hídrica.</li>
+              <li>Resolución pacífica, constructiva y dialogada de los conflictos internos.</li>
+            </ul>
+          </div>
+        `,
+        right: `
+          <div class="pg-cat-block">
+            <div class="pg-cat-title">1.3 · Valores Profesionales</div>
+            <p class="pg-cat-desc">Guían el desempeño técnico, la ética en el trabajo y el compromiso de cada servidor público con los objetivos institucionales.</p>
+            <ul class="pg-cat-list">
+              <li>Rigor científico y decisiones fundamentadas en datos técnicos reales.</li>
+              <li>Actualización constante y compromiso firme con el crecimiento profesional.</li>
+              <li>Resolución eficaz, ágil y creativa de las solicitudes de la población.</li>
+              <li>Orientación humana, paciencia y calidez en la atención ciudadana.</li>
+              <li>Responsabilidad profesional y asunción de consecuencias en los dictámenes.</li>
+              <li>Lealtad institucional y salvaguarda del prestigio de la autoridad hídrica.</li>
+              <li>Vocación de servicio inquebrantable para la transformación del entorno social.</li>
+              <li>Adaptabilidad climática y búsqueda de soluciones novedosas ante emergencias.</li>
+              <li>Imparcialidad técnica y emisión de dictámenes libres de sesgos o presiones.</li>
+              <li>Eficiencia operativa y optimización de los tiempos en la emisión de permisos.</li>
+            </ul>
+          </div>
+        `
+      },
+      {
+        left: `
+          <div class="pg-cat-block">
+            <ul class="pg-cat-list">
+              <li>Liderazgo técnico para motivar el uso eficiente del recurso con el ejemplo.</li>
+              <li>Compromiso deontológico anteponiendo el bien común sobre intereses particulares.</li>
+              <li>Fiscalización rigurosa y aplicación estricta de la legalidad en el monitoreo del recurso.</li>
+              <li>Trabajo interdisciplinario y articulación de saberes científicos, legales y sociales.</li>
+              <li>Resiliencia técnica ante los desafíos complejos de la escasez y el estrés hídrico.</li>
+            </ul>
+          </div>
+          <div class="ornament-line"><span></span><em>✦</em><span></span></div>
+        `,
+        right: `
+          <div class="pg-pull">
+            <p>El Catálogo de Valores es la herramienta técnica y administrativa normativa que sistematiza el espíritu institucional de la ASA, garantizando coherencia y excelencia en la gestión del patrimonio hídrico nacional.</p>
+            <cite>— Catálogo de Valores, ASA · Herramientas Técnicas/Administrativas Normativas</cite>
+          </div>
+        `
+      }
+    ]
+  }
+
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentBook = 0;
+let currentSpread = 0;
+
+// ─── FUNCTIONS ────────────────────────────────────────────────────────────────
+function openBook(bookIdx) {
+  currentBook = bookIdx;
+  currentSpread = 0;
+  renderSpread();
+
+  const overlay = document.getElementById('book-overlay');
+  overlay.style.display = 'flex';
+  // Force reflow then animate
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      overlay.classList.add('open');
+    });
+  });
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBook() {
+  const overlay = document.getElementById('book-overlay');
+  overlay.classList.remove('open');
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }, 600);
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('book-overlay')) {
+    closeBook();
+  }
+}
+
+// ─── PAGE-TURN ANIMATION ──────────────────────────────────────────────────────
+let isAnimating = false;
+
+function changePage(dir) {
+  if (isAnimating) return;
+  const book = books[currentBook];
+  const newSpread = currentSpread + dir;
+  if (newSpread < 0 || newSpread >= book.spreads.length) return;
+
+  // On mobile (≤700px) or if flip-layer is hidden, skip animation
+  const flipLayer = document.getElementById('flip-layer');
+  const isMobile = window.innerWidth <= 700;
+  if (isMobile) {
+    currentSpread = newSpread;
+    renderSpread();
+    return;
+  }
+
+  isAnimating = true;
+  animatePageTurn(dir, newSpread, () => {
+    isAnimating = false;
+  });
+}
+
+/**
+ * Animates a realistic page-turn.
+ *
+ * Forward (dir=+1):
+ *   - Clone current right-page content into #flip-layer (the "page being turned")
+ *   - Rotate flip-layer from 0° → -180° around its left edge (the spine)
+ *   - At ~halfway mark, swap the real page content silently
+ *   - Apply dynamic shadow on left page and receiving right-page area
+ *
+ * Backward (dir=-1):
+ *   - Update content immediately (new spread)
+ *   - Show flip-layer with new right-page content
+ *   - Rotate from -180° → 0° (page "un-turning" to reveal new spread)
+ */
+function animatePageTurn(dir, newSpread, onDone) {
+  const book = books[currentBook];
+  const flipLayer = document.getElementById('flip-layer');
+  const flipFront = document.getElementById('flip-front-content');
+  const flipBody = document.getElementById('flip-body');
+  const flipDocNum = document.getElementById('flip-doc-num');
+  const flipTitle = document.getElementById('flip-title');
+  const flipPageNum = document.getElementById('flip-page-num');
+  const flipShadow = document.getElementById('flip-shadow');
+  const flipShadowLeft = document.getElementById('flip-shadow-left');
+
+  const DURATION = 700; // ms — medium speed as requested
+  const ease = t => t < 0.5 ? 2*t*t : -1+(4-2*t)*t; // ease-in-out quad
+
+  if (dir === 1) {
+    // ── FORWARD: current right page flips to the left ──────────────────────
+
+    // 1. Snapshot current right-page content into flip-layer front face
+    const curSpread = book.spreads[currentSpread];
+    const curPages  = currentSpread * 2;
+    flipDocNum.textContent = book.docNum;
+    flipTitle.innerHTML    = book.title;
+    flipBody.innerHTML     = document.getElementById('right-content').innerHTML;
+    flipPageNum.textContent = curPages + 2;
+
+    // 2. Position & show flip-layer at 0° (exactly over right page)
+    flipLayer.style.display = 'block';
+    flipShadow.style.display = 'block';
+    flipShadowLeft.style.display = 'block';
+    flipLayer.style.transform = 'rotateY(0deg)';
+    flipLayer.style.zIndex = '50';
+    // Force layout
+    flipLayer.getBoundingClientRect();
+
+    let contentSwapped = false;
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      const rawT = Math.min(elapsed / DURATION, 1);
+      const t = ease(rawT);
+      const angle = -180 * t; // 0 → -180
+
+      // Rotate the flip layer
+      flipLayer.style.transform = `rotateY(${angle}deg)`;
+
+      // Dynamic shadow on the right-page area (where the turned page is landing):
+      // Shadow is strongest when page is near 0° or 180° (flat) and zero at 90°
+      const shadowIntensity = Math.abs(Math.cos(angle * Math.PI / 180));
+      flipShadow.style.background =
+        `linear-gradient(270deg, rgba(0,0,0,${0.22 * shadowIntensity}) 0%, transparent 80%)`;
+
+      // Dynamic shadow on left page (spine side darkens as page lifts off)
+      const liftT = 1 - Math.abs(Math.cos(angle * Math.PI / 180)); // peaks at 90°
+      flipShadowLeft.style.background =
+        `linear-gradient(90deg, transparent 60%, rgba(0,0,0,${0.14 * liftT}) 100%)`;
+
+      // At halfway (90°) swap the underlying page content silently
+      if (!contentSwapped && rawT >= 0.5) {
+        contentSwapped = true;
+        currentSpread = newSpread; // update state
+        renderSpreadSilent();      // swap real pages without animation
+      }
+
+      if (rawT < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        // Done
+        flipLayer.style.transform = 'rotateY(-180deg)';
+        // Small settle: hide the flip layer
+        setTimeout(() => {
+          flipLayer.style.display = 'none';
+          flipShadow.style.display = 'none';
+          flipShadowLeft.style.display = 'none';
+          flipLayer.style.transform = 'rotateY(0deg)';
+          onDone();
+        }, 30);
+      }
+    }
+
+    requestAnimationFrame(tick);
+
+  } else {
+    // ── BACKWARD: simulate page coming back from the left ──────────────────
+
+    // 1. Update real pages to the new (previous) spread immediately
+    currentSpread = newSpread;
+    renderSpreadSilent();
+
+    // 2. Load the flip-layer with the new right-page content
+    const newSpr   = book.spreads[newSpread];
+    const newPages = newSpread * 2;
+    flipDocNum.textContent  = book.docNum;
+    flipTitle.innerHTML     = book.title;
+    flipBody.innerHTML      = document.getElementById('right-content').innerHTML;
+    flipPageNum.textContent = newPages + 2;
+
+    // 3. Start from fully flipped (-180°) and rotate back to 0°
+    flipLayer.style.display = 'block';
+    flipShadow.style.display = 'block';
+    flipShadowLeft.style.display = 'block';
+    flipLayer.style.transform = 'rotateY(-180deg)';
+    flipLayer.style.zIndex = '50';
+    flipLayer.getBoundingClientRect();
+
+    const startTime = performance.now();
+
+    function tick(now) {
+      const elapsed = now - startTime;
+      const rawT = Math.min(elapsed / DURATION, 1);
+      const t = ease(rawT);
+      const angle = -180 + 180 * t; // -180 → 0
+
+      flipLayer.style.transform = `rotateY(${angle}deg)`;
+
+      const shadowIntensity = Math.abs(Math.cos(angle * Math.PI / 180));
+      flipShadow.style.background =
+        `linear-gradient(270deg, rgba(0,0,0,${0.22 * shadowIntensity}) 0%, transparent 80%)`;
+      const liftT = 1 - Math.abs(Math.cos(angle * Math.PI / 180));
+      flipShadowLeft.style.background =
+        `linear-gradient(90deg, transparent 60%, rgba(0,0,0,${0.14 * liftT}) 100%)`;
+
+      if (rawT < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        flipLayer.style.transform = 'rotateY(0deg)';
+        setTimeout(() => {
+          flipLayer.style.display = 'none';
+          flipShadow.style.display = 'none';
+          flipShadowLeft.style.display = 'none';
+          onDone();
+        }, 30);
+      }
+    }
+
+    requestAnimationFrame(tick);
+  }
+}
+
+/** Updates all DOM content for currentSpread with NO transition animation */
+function renderSpreadSilent() {
+  const book   = books[currentBook];
+  const spread = book.spreads[currentSpread];
+  const totalSpreads = book.spreads.length;
+  const totalPages   = totalSpreads * 2;
+  const leftPage  = currentSpread * 2 + 1;
+  const rightPage = currentSpread * 2 + 2;
+
+  document.getElementById('left-doc-num').textContent  = book.docNum;
+  document.getElementById('right-doc-num').textContent = book.docNum;
+  document.getElementById('left-title').innerHTML  = book.title;
+  document.getElementById('right-title').innerHTML = book.title;
+
+  document.getElementById('left-content').innerHTML  = spread.left;
+  document.getElementById('right-content').innerHTML = spread.right;
+
+  document.getElementById('left-page-num').textContent  = leftPage;
+  document.getElementById('right-page-num').textContent = rightPage;
+
+  document.getElementById('btn-prev').disabled = currentSpread === 0;
+  document.getElementById('btn-next').disabled = currentSpread >= totalSpreads - 1;
+  document.getElementById('page-indicator').textContent =
+    `Páginas ${leftPage}–${Math.min(rightPage, totalPages)} de ${totalPages}`;
+}
+
+function renderSpread() {
+  renderSpreadSilent();
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  const overlay = document.getElementById('book-overlay');
+  if (!overlay.classList.contains('open')) return;
+  if (e.key === 'Escape') closeBook();
+  if (e.key === 'ArrowRight') changePage(1);
+  if (e.key === 'ArrowLeft') changePage(-1);
+});
+</script>
+</body>
+</html>
